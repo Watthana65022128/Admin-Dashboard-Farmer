@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { LogOut, Shield } from 'lucide-react';
+import LogoutConfirmModal from './LogoutConfirmModal';
 
 export default function Layout({ children }) {
   const { user, logout } = useAuth();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-agriculture-100 via-agriculture-200 to-agriculture-300">
@@ -25,11 +28,7 @@ export default function Layout({ children }) {
                   <p className="text-xs sm:text-sm text-agriculture-600 truncate">{user.email}</p>
                 </div>
                 <button
-                  onClick={() => {
-                    if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
-                      logout();
-                    }
-                  }}
+                  onClick={() => setShowLogoutModal(true)}
                   className="flex items-center justify-center px-3 py-2 sm:px-4 bg-agriculture-500 text-white rounded-lg hover:bg-agriculture-600 transition-colors border border-agriculture-300 text-sm sm:text-base w-full sm:w-auto order-1 sm:order-2"
                 >
                   <LogOut className="w-4 h-4 mr-2 flex-shrink-0" />
@@ -43,6 +42,16 @@ export default function Layout({ children }) {
         {/* Content */}
         {children}
       </div>
+
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        isOpen={showLogoutModal}
+        onClose={() => setShowLogoutModal(false)}
+        onConfirm={() => {
+          setShowLogoutModal(false);
+          logout();
+        }}
+      />
     </div>
   );
 }
